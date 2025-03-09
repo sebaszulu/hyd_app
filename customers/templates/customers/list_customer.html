@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h1 class="text-3xl font-bold underline">
+    Lista de clientes
+</h1>
+
+<ul>
+    {% for customer in customers %}
+        <li>
+            {{ customer.name}}
+            <p>{{ customer.person_type }}</p>
+        </li>
+    {% endfor %}
+</ul>
+{% endblock content %}
