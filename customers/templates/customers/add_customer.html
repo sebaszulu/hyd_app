@@ -23,38 +23,33 @@
                 {% endfor %}
             </fieldset>
 
-            <!-- Sección Asesor del Cliente -->
-            <fieldset class="border p-4 rounded-lg">
-                <legend class="text-lg font-semibold text-gray-700">Asesor del Cliente</legend>
-                {% for field in adviser_form %}
-                    <div class="flex flex-col mt-2">
-                        <label class="text-gray-700 font-semibold">{{ field.label }}</label>
-                        {{ field }}
-                        {% if field.errors %}
-                            <p class="text-red-500 text-sm">{{ field.errors.0 }}</p>
-                        {% endif %}
-                    </div>
-                {% endfor %}
-            </fieldset>
-
-            <!-- Sección Ubicación -->
-            <fieldset class="border p-4 rounded-lg">
-                <legend class="text-lg font-semibold text-gray-700">Ubicación</legend>
-                {% for field in location_form %}
-                    <div class="flex flex-col mt-2">
-                        <label class="text-gray-700 font-semibold">{{ field.label }}</label>
-                        {{ field }}
-                        {% if field.errors %}
-                            <p class="text-red-500 text-sm">{{ field.errors.0 }}</p>
-                        {% endif %}
-                    </div>
-                {% endfor %}
-            </fieldset>
-
             <button type="submit" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-2 px-4 rounded-lg mt-4">
                 Guardar Cliente
             </button>
         </form>
     </div>
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            const personTypeField = document.getElementById("id_person_type");
+            const nameField = document.getElementById("id_name").closest("div");
+            const lastNameField = document.getElementById("id_last_name").closest("div");
+            const companyNameField = document.getElementById("id_company_name").closest("div");
+        
+            function toggleFields() {
+                if (personTypeField.value === "NAT") {
+                    nameField.style.display = "block";
+                    lastNameField.style.display = "block";
+                    companyNameField.style.display = "none";
+                } else {
+                    nameField.style.display = "none";
+                    lastNameField.style.display = "none";
+                    companyNameField.style.display = "block";
+                }
+            }
+        
+            personTypeField.addEventListener("change", toggleFields);
+            toggleFields();
+        });
+    </script>
 {% endblock %}
 

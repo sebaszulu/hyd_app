@@ -25,9 +25,13 @@ class Customer(models.Model):
         JURIDICAL = 'JUR', 'Persona jurídica'
 
     class Mode(models.TextChoices):
-        VIRTUAL = 'VIR', 'Virtual'
-        IN_PERSON = 'PRE', 'Presencial'
+        VIRTUAL = 'VIR', 'Solo Virtual'
+        IN_PERSON = 'PRE', 'Presencial y Virtual'
 
+    
+    sales_advisor = models.ForeignKey(
+        SalesAdvisor, on_delete=models.DO_NOTHING, verbose_name='Asesor Comercial HyD'
+    )
     person_type = models.CharField(
         max_length=3,
         choices=PersonType.choices,
@@ -35,24 +39,29 @@ class Customer(models.Model):
         verbose_name='tipo',
     )
     identification = models.CharField(max_length=20, unique=True, verbose_name='identificación')
-    name = models.CharField(max_length=100, verbose_name='nombre')
-    last_name = models.CharField(max_length=100, null=True, blank=True, verbose_name='apellidos')
-    email = models.EmailField(unique=True, verbose_name='correo electrónico')
-    phone = models.CharField(max_length=20, null=True, blank=True, verbose_name='teléfono')
-    principal_address = models.CharField(max_length=300, null=True, blank=True, verbose_name='dirección')
+
+    #Para persona natural
+    name = models.CharField(max_length=100, null=True, blank=True, verbose_name='Nombre')
+    last_name = models.CharField(max_length=100, null=True, blank=True, verbose_name='Apellidos')
+
+    #Para persona juridica
+    company_name = models.CharField(max_length=200, null=True, blank=True, verbose_name='Razón social')
+
+    #Aplicable para ambas personas
+    trade_name = models.CharField(max_length=200, null=True, blank=True, verbose_name='Nombre comercial')
+
+    email = models.EmailField(unique=True, verbose_name='Correo electrónico')
+    phone = models.CharField(max_length=20, null=True, blank=True, verbose_name='Teléfono')
+    principal_address = models.CharField(max_length=300, null=True, blank=True, verbose_name='Dirección')
     mode = models.CharField(
         max_length=3,
         choices=Mode.choices,
         default=Mode.VIRTUAL,
         verbose_name='modalidad',
     )
-    rut = models.FileField(upload_to='documentos/', verbose_name='RUT')
+    rut = models.FileField(upload_to='documents/', verbose_name='RUT')
     created_at = models.DateTimeField(auto_now_add=True, verbose_name='creado el')
     status = models.BooleanField(default=True, verbose_name='estado')
-
-    sales_advisor = models.ForeignKey(
-        SalesAdvisor, on_delete=models.DO_NOTHING, verbose_name='asesor comercial'
-    )
 
     def is_natural(self):
         return self.person_type == self.PersonType.NATURAL
@@ -62,8 +71,8 @@ class Customer(models.Model):
     
     def __str__(self):
         if self.is_natural():
-            return f'({self.get_person_type_display()}) - {self.name} {self.last_name}'
-        return f'({self.get_person_type_display()}) - {self.name}'
+            return f'({self.get_person_type_display()}) - {self.name} {self.last_name or ''}'
+        return f'({self.get_person_type_display()}) - {self.company_name or 'Sin Razón social'}'
     
 '''
 Clase que representa a los Asesores de cada Agencia. 
