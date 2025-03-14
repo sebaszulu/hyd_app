@@ -41,5 +41,5 @@ class LocationForm(forms.ModelForm):
         fields = '__all__'
         widgets = {
             'city': forms.TextInput(attrs={'class': 'block w-full border border-gray-300 bg-white rounded-md p-2'}),
-            'address': forms.Textarea(attrs={'class': 'block w-full border border-gray-300 bg-white rounded-md p-2'}),
+            'address': forms.TextInput(attrs={'class': 'block w-full border border-gray-300 bg-white rounded-md p-2'}),
         }

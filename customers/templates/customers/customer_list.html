@@ -1,0 +1,145 @@
+{% extends "base.html" %}
+
+{% block title %}Lista de Clientes{% endblock %}
+
+{% block content %}
+<div class="max-w-7xl mx-auto bg-white shadow-lg rounded-lg p-6 mt-6">
+    <h2 class="text-2xl font-bold mb-4 text-gray-800">Lista de Clientes</h2>
+
+    <!-- Agregamos overflow-x-auto para evitar desbordes -->
+    <div class="overflow-x-auto">
+        <table id="customerTable" class="table-auto w-full bg-white border border-gray-300">
+            <thead>
+                <tr class="bg-gray-200 text-left">
+                    <th class="border px-4 py-2">ID</th>
+                    <th class="border px-4 py-2">Tipo</th>
+                    <th class="border px-4 py-2">Nombre</th>
+                    <th class="border px-4 py-2">Razón Social</th>
+                    <th class="border px-4 py-2">Nombre Comercial</th>
+                    <th class="border px-4 py-2">Email</th>
+                    <th class="border px-4 py-2">Teléfono</th>
+                    <th class="border px-4 py-2">Dirección</th>
+                    <th class="border px-4 py-2">Modalidad</th>
+                    <th class="border px-4 py-2">RUT</th>
+                    <th class="border px-4 py-2">Fecha Creación</th>
+                    <th class="border px-4 py-2">Estado</th>
+                    <th class="border px-4 py-2">Asesor Comercial HyD</th>
+                    <th class="border px-4 py-2">Detalles</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for customer in customers %}
+                <tr>
+                    <td class="border px-4 py-2">{{ customer.id }}</td>
+                    <td class="border px-4 py-2">{{ customer.get_person_type_display }}</td>
+                    <td class="border px-4 py-2">
+                        {% if customer.is_natural %}
+                            {{ customer.name }} {{ customer.last_name }}
+                        {% else %}
+                            -
+                        {% endif %}
+                    </td>
+                    <td class="border px-4 py-2">
+                        {% if customer.is_juridical %}
+                            {{ customer.company_name }}
+                        {% else %}
+                            -
+                        {% endif %}
+                    </td>
+                    <td class="border px-4 py-2">{{ customer.trade_name }}</td>
+                    <td class="border px-4 py-2">{{ customer.email }}</td>
+                    <td class="border px-4 py-2">{{ customer.phone }}</td>
+                    <td class="border px-4 py-2">{{ customer.principal_address }}</td>
+                    <td class="border px-4 py-2">{{ customer.get_mode_display }}</td>
+                    <td class="border px-4 py-2">
+                        {% if customer.rut %}
+                            <a href="{{ customer.rut.url }}" target="_blank" class="text-blue-600 underline">Ver RUT</a>
+                        {% else %}
+                            -
+                        {% endif %}
+                    </td>
+                    <td class="border px-4 py-2">{{ customer.created_at|date:"d-m-Y" }}</td>
+                    <td class="border px-4 py-2">
+                        {% if customer.status %}
+                            <span class="text-green-500 font-bold">Activo</span>
+                        {% else %}
+                            <span class="text-red-500 font-bold">Inactivo</span>
+                        {% endif %}
+                    </td>
+                    <td class="border px-4 py-2">
+                        {% if customer.sales_advisor %}
+                            {{ customer.sales_advisor.first_name }} {{ customer.sales_advisor.last_name }}
+                        {% else %}
+                            -
+                        {% endif %}
+                    </td>
+                    <td class="border px-4 py-2">
+                        <button class="toggle-details bg-indigo-600 text-white px-2 py-1 rounded-lg">
+                            Ver más
+                        </button>
+                        <div class="details hidden mt-2 p-3 bg-gray-100 rounded-lg">
+                            <strong class="text-gray-700">Asesores:</strong>
+                            {% if customer.advisercustomer_set.all %}
+                                <ul class="list-disc pl-4">
+                                    {% for adviser in customer.advisercustomer_set.all %}
+                                        <li>{{ adviser.name }} {{ adviser.last_name }} ({{ adviser.email }})</li>
+                                    {% endfor %}
+                                </ul>
+                            {% else %}
+                                <p class="text-gray-500">No tiene asesores.</p>
+                            {% endif %}
+                            <br>
+                            <strong class="text-gray-700">Ubicaciones:</strong>
+                            {% if customer.location_set.all %}
+                                <ul class="list-disc pl-4">
+                                    {% for location in customer.location_set.all %}
+                                        <li>{{ location.city }} - {{ location.address }}</li>
+                                    {% endfor %}
+                                </ul>
+                            {% else %}
+                                <p class="text-gray-500">No tiene ubicaciones.</p>
+                            {% endif %}
+                        </div>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<!-- Importar DataTables.js -->
+<link rel="stylesheet" href="https://cdn.datatables.net/1.11.5/css/jquery.dataTables.min.css">
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.datatables.net/1.11.5/js/jquery.dataTables.min.js"></script>
+
+<script>
+    $(document).ready(function () {
+        $('#customerTable').DataTable({
+            "pageLength": 10,  // Mostrar 10 registros por página
+            "language": {
+                "search": "Buscar:",
+                "lengthMenu": "Mostrar _MENU_ registros",
+                "info": "Mostrando _START_ a _END_ de _TOTAL_ clientes",
+                "paginate": {
+                    "first": "Primero",
+                    "last": "Último",
+                    "next": "Siguiente",
+                    "previous": "Anterior"
+                }
+            }
+        });
+
+        // Script para mostrar/ocultar detalles
+        document.querySelectorAll(".toggle-details").forEach(button => {
+            button.addEventListener("click", function () {
+                let details = this.nextElementSibling;
+                details.classList.toggle("hidden");
+                this.textContent = details.classList.contains("hidden") ? "Ver más" : "Ocultar";
+            });
+        });
+    });
+</script>
+
+{% endblock %}
+

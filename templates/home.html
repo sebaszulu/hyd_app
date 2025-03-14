@@ -6,8 +6,16 @@
 <div class="container mx-auto text-center py-10">
     <h1 class="text-3xl font-bold text-indigo-700">Bienvenido a administración de clientes</h1>
     <p class="text-gray-600 mt-4">Gestiona clientes, asesores y más.</p>
-    <a href="{% url 'add_customer' %}" class="mt-6 inline-block bg-indigo-600 text-white px-6 py-3 rounded-lg shadow-md hover:bg-indigo-700">
-        Agregar Cliente
-    </a>
+    
+    <div>
+        {% if user.is_authenticated %}
+            <p class="text-gray-600 mt-4">Bienvenido, {{ user.first_name }}</p>
+            {% csrf_token %}
+        {% else %}
+            <a href="{% url 'login' %}" class="mt-6 inline-block bg-indigo-600 text-white px-6 py-3 rounded-lg shadow-md hover:bg-indigo-700">
+                Iniciar sesión
+            </a>
+        {% endif %}
+    </div>
 </div>
 {% endblock %}

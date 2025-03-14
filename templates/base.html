@@ -5,6 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{% block title %}Hoteles & Destinos  {% endblock %}</title>
+    <link rel ="icon" href="{% static 'favicon.png' %}" type="image/x-icon">
     <script src="https://cdn.tailwindcss.com"></script>
 </head>
 <body class="bg-gray-100">
@@ -20,7 +21,33 @@
             <!-- Menú de Navegación -->
             <div class="hidden md:flex space-x-6">
                 <a href="{% url 'home' %}" class="text-gray-700 hover:text-indigo-600">Inicio</a>
-                <a href="{% url 'add_customer' %}" class="text-gray-700 hover:text-indigo-600">Clientes</a>
+                {% if user.is_authenticated  %}
+                    <div class="relative">
+                        <!-- Botón de Clientes -->
+                        <button id="clientesDropdownBtn" class="text-gray-700 hover:text-indigo-600 focus:outline-none">
+                            Clientes ▼
+                        </button>
+                
+                        <!-- Menú desplegable -->
+                        <div id="clientesDropdown" class="hidden absolute mt-2 w-48 bg-white border rounded-lg shadow-lg">
+                            <a href="{% url 'add_customer' %}" class="block px-4 py-2 text-gray-700 hover:bg-gray-100">Agregar Cliente</a>
+                            <a href="{% url 'add_adviser' %}" class="block px-4 py-2 text-gray-700 hover:bg-gray-100">Agregar Asesor</a>
+                            <a href="{% url 'add_location' %}" class="block px-4 py-2 text-gray-700 hover:bg-gray-100">Agregar Ubicación</a>
+                        </div>
+                    </div>
+                    <div>
+                {% endif %}
+                    {% if user.is_authenticated %}
+                        <span class="text-gray-700 mr-4">Bienvenido, {{ user.first_name }}</span>
+                        <form method="POST" action="{% url 'logout' %}" class="inline">
+                            {% csrf_token %}
+                            <button type="submit" class="text-red-600 hover:underline">Cerrar Sesión</button>
+                        </form> 
+                        {% csrf_token %}
+                    {% else %}
+                        <a href="{% url 'login' %}" class="text-indigo-600 hover:underline">Iniciar Sesión</a>
+                    {% endif %}
+                </div>
             </div>
 
             <!-- Botón de Menú Móvil -->
@@ -46,6 +73,23 @@
             document.getElementById("mobile-menu").classList.toggle("hidden");
         });
     </script>
-
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            const dropdownBtn = document.getElementById("clientesDropdownBtn");
+            const dropdownMenu = document.getElementById("clientesDropdown");
+    
+            dropdownBtn.addEventListener("click", function () {
+                dropdownMenu.classList.toggle("hidden");
+            });
+    
+            // Cerrar el dropdown si se hace clic fuera
+            document.addEventListener("click", function (event) {
+                if (!dropdownBtn.contains(event.target) && !dropdownMenu.contains(event.target)) {
+                    dropdownMenu.classList.add("hidden");
+                }
+            });
+        });
+    </script>
+    
 </body>
 </html>

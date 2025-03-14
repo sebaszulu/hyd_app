@@ -128,6 +128,11 @@ STATICFILES_DIRS = [
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field
 
+LOGIN_URL = 'login'
+LOGIN_REDIRECT_URL = 'home'  # Cambia 'home' por la vista a la que quieras redirigir después del login
+LOGOUT_REDIRECT_URL = 'login'  # Redirige a login después del logout
+
+
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 CRISPY_ALLOWED_TEMPLATE_PACKS = "tailwind"
