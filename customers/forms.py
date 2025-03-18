@@ -1,6 +1,7 @@
 from django import forms
 from .models import Customer, AdviserCustomer, Location
 
+
 class CustomerForm(forms.ModelForm):
     class Meta:
         model = Customer
@@ -24,6 +25,7 @@ class CustomerForm(forms.ModelForm):
             'rut': forms.FileInput(attrs={'class': 'block w-full border border-gray-300 bg-white rounded-md p-2'}),
         }
 
+
 class AdviserCustomerForm(forms.ModelForm):
     class Meta:
         model = AdviserCustomer
@@ -34,6 +36,12 @@ class AdviserCustomerForm(forms.ModelForm):
             'phone': forms.TextInput(attrs={'class': 'block w-full border border-gray-300 bg-white rounded-md p-2'}),
             'email': forms.EmailInput(attrs={'class': 'block w-full border border-gray-300 bg-white rounded-md p-2'}),
         }
+
+    def clean_phone(self):
+        phone = self.cleaned_data.get("phone")
+        if not phone.isdigit():
+            raise forms.ValidationError("El teléfono solo debe contener números.")
+        return phone
 
 class LocationForm(forms.ModelForm):
     class Meta:

@@ -5,8 +5,19 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{% block title %}Hoteles & Destinos  {% endblock %}</title>
-    <link rel ="icon" href="{% static 'favicon.png' %}" type="image/x-icon">
+    <link rel="icon" href="{% static 'favicon.png' %}" type="image/x-icon">
     <script src="https://cdn.tailwindcss.com"></script>
+
+    <!-- Select2.js y jQuery para django-select2 -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+
+
+    {{ form.media.css }}  <!-- CSS generado por django-select2 -->
+
+
+    
 </head>
 <body class="bg-gray-100">
 
@@ -21,14 +32,11 @@
             <!-- Menú de Navegación -->
             <div class="hidden md:flex space-x-6">
                 <a href="{% url 'home' %}" class="text-gray-700 hover:text-indigo-600">Inicio</a>
-                {% if user.is_authenticated  %}
+                {% if user.is_authenticated %}
                     <div class="relative">
-                        <!-- Botón de Clientes -->
                         <button id="clientesDropdownBtn" class="text-gray-700 hover:text-indigo-600 focus:outline-none">
                             Clientes ▼
                         </button>
-                
-                        <!-- Menú desplegable -->
                         <div id="clientesDropdown" class="hidden absolute mt-2 w-48 bg-white border rounded-lg shadow-lg">
                             <a href="{% url 'add_customer' %}" class="block px-4 py-2 text-gray-700 hover:bg-gray-100">Agregar Cliente</a>
                             <a href="{% url 'add_adviser' %}" class="block px-4 py-2 text-gray-700 hover:bg-gray-100">Agregar Asesor</a>
@@ -36,27 +44,22 @@
                         </div>
                     </div>
                     <div>
-                {% endif %}
-                    {% if user.is_authenticated %}
                         <span class="text-gray-700 mr-4">Bienvenido, {{ user.first_name }}</span>
                         <form method="POST" action="{% url 'logout' %}" class="inline">
                             {% csrf_token %}
                             <button type="submit" class="text-red-600 hover:underline">Cerrar Sesión</button>
-                        </form> 
-                        {% csrf_token %}
-                    {% else %}
-                        <a href="{% url 'login' %}" class="text-indigo-600 hover:underline">Iniciar Sesión</a>
-                    {% endif %}
-                </div>
+                        </form>
+                    </div>
+                {% else %}
+                    <a href="{% url 'login' %}" class="text-indigo-600 hover:underline">Iniciar Sesión</a>
+                {% endif %}
             </div>
 
-            <!-- Botón de Menú Móvil -->
             <button id="menu-toggle" class="md:hidden text-gray-700 focus:outline-none text-2xl">
                 ☰
             </button>
         </nav>
 
-        <!-- Menú Móvil -->
         <div id="mobile-menu" class="hidden bg-white md:hidden flex flex-col p-4 space-y-4 shadow-md">
             <a href="{% url 'add_customer' %}" class="text-gray-700 hover:text-indigo-600">Clientes</a>
         </div>
@@ -67,22 +70,20 @@
         {% block content %}{% endblock content %}
     </div>
 
+    <!-- Script menú móvil -->
     <script>
-        // Toggle del menú móvil
         document.getElementById("menu-toggle").addEventListener("click", function() {
             document.getElementById("mobile-menu").classList.toggle("hidden");
         });
-    </script>
-    <script>
+
         document.addEventListener("DOMContentLoaded", function () {
             const dropdownBtn = document.getElementById("clientesDropdownBtn");
             const dropdownMenu = document.getElementById("clientesDropdown");
-    
+
             dropdownBtn.addEventListener("click", function () {
                 dropdownMenu.classList.toggle("hidden");
             });
-    
-            // Cerrar el dropdown si se hace clic fuera
+
             document.addEventListener("click", function (event) {
                 if (!dropdownBtn.contains(event.target) && !dropdownMenu.contains(event.target)) {
                     dropdownMenu.classList.add("hidden");
@@ -90,6 +91,33 @@
             });
         });
     </script>
+
+    <!-- Diálogo de mensajes -->
+    {% if messages %}
+    <dialog id="alertDialog" class="rounded-lg p-6 shadow-xl text-center w-80 border border-gray-300">
+        {% for message in messages %}
+            <div class="text-sm font-medium p-4 rounded-lg shadow
+                {% if message.tags == 'success' %}
+                    bg-green-100 border border-green-300
+                {% elif message.tags == 'error' %}
+                    bg-red-100 border border-red-300
+                {% endif %}">
+                {{ message }}
+            </div>
+        {% endfor %}
+    </dialog>
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            const dialog = document.getElementById("alertDialog");
+            if (dialog) {
+                dialog.showModal();
+                setTimeout(() => {
+                    dialog.close();
+                }, 3000);
+            }
+        });
+    </script>
+    {% endif %}
     
 </body>
 </html>

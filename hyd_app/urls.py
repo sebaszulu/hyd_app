@@ -25,4 +25,5 @@ urlpatterns = [
     path('', HomeView.as_view(), name='home'),
     path('clientes/', include('customers.urls')),
     path('usuarios/', include('users.urls')),
+    path('select2/', include('django_select2.urls')),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

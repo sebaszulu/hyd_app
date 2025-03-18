@@ -1,4 +1,5 @@
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.contrib import messages
 from django.urls import reverse_lazy
 from django.views import generic
 from django.views.generic import ListView
@@ -13,7 +14,12 @@ class CustomerFormView(LoginRequiredMixin, generic.FormView):
 
     def form_valid(self, form):
         form.save()
+        messages.success(self.request, "Cliente guardado correctamente.")
         return super().form_valid(form)
+
+    def form_invalid(self, form):
+        messages.error(self.request, "Error al guardar. Verifica los campos e intenta nuevamente.")
+        return super().form_invalid(form)
 
 
 class AdviserCustomerFormView(LoginRequiredMixin, generic.FormView):
@@ -24,8 +30,13 @@ class AdviserCustomerFormView(LoginRequiredMixin, generic.FormView):
 
     def form_valid(self, form):
         form.save()
+        messages.success(self.request, "Asesor guardado correctamente.")
         return super().form_valid(form)
-
+    
+    def form_invalid(self, form):
+        form.save()
+        messages.error(self.request, "Error al guardar. Verifica los campos e intenta nuevamente.")
+        return super().form_invalid()
 
 class LocationFormView(LoginRequiredMixin, generic.FormView):
     template_name = "customers/add_location.html"
@@ -35,7 +46,13 @@ class LocationFormView(LoginRequiredMixin, generic.FormView):
 
     def form_valid(self, form):
         form.save()
+        messages.success(self.request, "Ubicación guardada correctamente.")
         return super().form_valid(form)
+    
+    def form_invalid(self, form):
+        form.save()
+        messages.error(self.request, "Error al guardar. Verifica los campos e intenta nuevamente.")
+        return super().form_invalid()
 
 
 class CustomerListView(LoginRequiredMixin, ListView):
